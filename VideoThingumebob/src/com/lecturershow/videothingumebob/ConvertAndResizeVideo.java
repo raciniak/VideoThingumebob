@@ -19,8 +19,8 @@ public class ConvertAndResizeVideo {
      * Funkcja konwertuje plik wideo z podanej lokalizacji na inny plik podany w zmiennej outputFile 
      * @param inputFile ścieżka do pliku wideo, który ma zostać poddany konwersji na inny format
      * @param outputFile ścieżka do już skonwertowanego pliku wideo
-     * @param width
-     * @param height
+     * @param width Szerokość obrazu nowego pliku wideo
+     * @param height Wysokość obrazu nowego pliku wideo
      */
     public static void go(String inputFile, String outputFile, int width, int height)
     {
