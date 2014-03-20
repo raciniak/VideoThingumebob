@@ -1,6 +1,5 @@
 package com.lecturershow.videothingumebob;
 
-import com.itextpdf.text.BadElementException;
 import com.xuggle.mediatool.MediaToolAdapter;
 import com.xuggle.mediatool.event.ICloseEvent;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
@@ -32,12 +31,6 @@ import javax.imageio.ImageIO;
         // prevPicture, porównując zmianę obrazu co sekunda wyeliminuję problem
         // zapisywania obrazu w trakcie animowanego przejścia(tak mi się wydaje)
         private ArrayList<BufferedImage> backBuffer;
-        // Tu przechowuję obrazy do zapisu jako PDF
-        private ArrayList<BufferedImage> imagesToPDF;
-        // Zapisz osobno pliki graficzne
-        private boolean saveImages;
-        // Zapisz pliki graficzne do PDF
-        private boolean savePdf;
         // Numer indeksu z backBuffer, wykorzystywany w funkcji  isAnimatedTransition
         private int imageToSave;
         // Czasy pojawienia się slajdów
@@ -53,29 +46,8 @@ import javax.imageio.ImageIO;
             this.parent = parent;
             this.prevPicture = new int[parent.videoHeight][parent.videoWidth];
             this.backBuffer = new ArrayList<BufferedImage>();
-            this.imagesToPDF = new ArrayList<BufferedImage>();
             this.times = new ArrayList<String>();
             this.lastImageNumber = 1;
-            this.saveImages = true;
-            this.savePdf = true;
-        }
-
-        /**
-         * Konstruktor rozszerzony, możliwość wyboru, czy pliki mają być zapisane 
-         * jako PDF, czy jako pliki graficzne lub też w obu formach
-         * @param parent Klasa nadrzędna VideoThingumebob
-         * @param saveImages true = zapis obrazków w osobnych plikach
-         * @param savePdf true = zapis obrazków w formie PDF
-         */
-        public GetImageFromVideoListener(VideoThingumebob parent, boolean saveImages, boolean savePdf) {
-            this.parent = parent;
-            this.prevPicture = new int[parent.videoHeight][parent.videoWidth];
-            this.backBuffer = new ArrayList<BufferedImage>();
-            this.imagesToPDF = new ArrayList<BufferedImage>();
-            this.times = new ArrayList<String>();
-            this.lastImageNumber = 1;
-            this.saveImages = saveImages;
-            this.savePdf = savePdf;
         }
 
         @Override
@@ -108,27 +80,19 @@ import javax.imageio.ImageIO;
                         // Jeżeli nie mamy animowanego przejścia, to jakiś obraz z bufora 
                         // pasował do aktualnego, dlatego właśnie go zapisuję do pliku i pdf-a
                         fileName = Integer.toString( Integer.parseInt(fileName) - (this.imageToSave+1) );
-                        //String newFileName = Integer.toString(  );
-                        // Jeżeli użytkownik chce zapisać obraz do pliku PDF
-                        if( this.savePdf )
-                            imagesToPDF.add(this.backBuffer.get(imageToSave));
                         
                         // Zapisuję czas pojawienia się slajdu
                         this.times.add(fileName);
                               
-
                         // Zapisuję obraz w formie pliku graficznego
                         // Nazwa pliku to sekunda z filmu, którą zapisuję
-                        if( this.saveImages )
-                        {
-                            try {
-                                ImageIO.write(this.backBuffer.get(imageToSave), this.parent.format, new File(this.parent.picsSaveLocation+fileName+"."+parent.format));
-                            } catch (IOException ex) {
-                                System.out.println(ex.getMessage());
-                            }
-                        }               
+                        try {
+                            ImageIO.write(this.backBuffer.get(imageToSave), this.parent.format, new File(this.parent.picsSaveLocation+fileName+"."+parent.format));
+                        } catch (IOException ex) {
+                            System.out.println(ex.getMessage());
+                        }
+                    }               
                         System.out.printf("Zapisałem obraz nr.%s \n", fileName);
-                    }
                 }else{ 
                     // Jeżeli jest to kolejny obraz
                     // Porównuję tablicę pikseli zapisanych wcześniej
@@ -138,23 +102,16 @@ import javax.imageio.ImageIO;
                         // pasował do aktualnego, dlatego właśnie go zapisuję do pliku i pdf-a
                         fileName = Integer.toString( Integer.parseInt(fileName) - (this.imageToSave+1) );
                         
-                        if( this.savePdf )
-                            imagesToPDF.add(this.backBuffer.get(imageToSave));
-                        
                         // Zapisuję czas pojawienia się slajdu
                         this.times.add(fileName);
 
-                        // Zapisuję obraz
-                        if( this.saveImages )
-                        {
-                            try {
-                                System.out.printf("Zapisuje obraz nr.%s\n", fileName);
-                                ImageIO.write(this.backBuffer.get(imageToSave), this.parent.format, new File(this.parent.picsSaveLocation+fileName+"."+parent.format));
-                            } catch (IOException ex) {
-                                Logger.getLogger(VideoThingumebob.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                        try {
+                            System.out.printf("Zapisuje obraz nr.%s\n", fileName);
+                            ImageIO.write(this.backBuffer.get(imageToSave), this.parent.format, new File(this.parent.picsSaveLocation+fileName+"."+parent.format));
+                        } catch (IOException ex) {
+                            Logger.getLogger(VideoThingumebob.class.getName()).log(Level.SEVERE, null, ex);
                         }
-
+                        
                         // Kopiuję tablicę pikseli aktualnego obrazka do "pixel"
                         System.arraycopy(getPixels(image), 0, this.prevPicture, 0, getPixels(image).length);
                         
@@ -292,17 +249,6 @@ import javax.imageio.ImageIO;
          */
         public void onClose(ICloseEvent event)
         {
-            if( this.savePdf )
-            {
-                // Konwertuję ArrayList na tablicę obiektów BufferedImage
-                BufferedImage[] ArrayOfImages = this.imagesToPDF.toArray(new BufferedImage[this.imagesToPDF.size()]);
-                try {
-                    // Zapis obrazów do PDF
-                    Pdf.pngs2pdf(ArrayOfImages, this.parent.picsSaveLocation, this.parent.pdfName);
-                } catch (BadElementException ex) {
-                    Logger.getLogger(VideoThingumebob.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
             try {
             	
                 // Zapisuję do pliku czasy pojawienia się slajdów

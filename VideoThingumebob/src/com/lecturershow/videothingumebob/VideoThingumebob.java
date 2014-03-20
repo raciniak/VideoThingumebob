@@ -1,8 +1,9 @@
 
 package com.lecturershow.videothingumebob;
 
+import com.lecturershow.videothingumebob.ExceptionClasses.BadDirectoryLocationException;
 import com.lecturershow.videothingumebob.ExceptionClasses.BadFileLocationException;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.IO;
+import com.lecturershow.videothingumebob.ExceptionClasses.BadTypeFileException;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.IMediaReader;
 import com.xuggle.mediatool.IMediaTool;
@@ -40,7 +41,7 @@ public class VideoThingumebob {
     private IContainer container;
     
     /**
-     * Konstruktor klasy dwuparametrowy
+     * Konstruktor klasy 
      * @param movieFile ścieżka do pliku wideo
      * @param picsSaveLocation ścieżka do katalogu wynikowego
      * @param format format plików graficznych
@@ -48,13 +49,15 @@ public class VideoThingumebob {
      * @param tolleranceOfDifference poziom tolerancji na zmianę koloru (0 - 255)
      * @param intervalTime czas w sekundach z jaką ma odbywać się porównywanie obrazów
      * @param backBufferSize nazwałem to buforem powrotnym, to ilość obrazów, które będą porównywane z aktualnym, w celu wyeliminowania animowanego przejścia między slajdami
-     * @throws BadFileLocationException 
+     * @throws BadFileLocationException Wyjątek rzucany, kiedy lokalizacja pliku jest niepoprawna
+     * @throws BadDirectoryLocationException Wyjątek rzucany, kiedy likalizacja katalogu jest niepoprawna
+     * @throws BadTypeFileException Wyjątek rzucany, kiedy rozszerzenie pliku nie jest obsługiwany
      */
     public VideoThingumebob(String movieFile, String picsSaveLocation, 
                             String format, String pdfName, 
                             int tolleranceOfDifference, int intervalTime,
                             int backBufferSize
-                            ) throws BadFileLocationException
+                            ) throws BadFileLocationException, BadDirectoryLocationException, BadTypeFileException
     {
     	//
     	// Sprawdzam poprawność wprowadzonych parametrów
@@ -65,9 +68,18 @@ public class VideoThingumebob {
     		throw new BadFileLocationException("Zła lokalizacja pliku wejściowego! Lokalizacja musi być bezwzględną ścieżką do pliku wideo.");
     	}
     	
+    	f = new File(picsSaveLocation);
+    	if( !f.isDirectory() || !f.exists() )
+    	{
+    		throw new BadDirectoryLocationException("Zła lokalizacja katalogu wyjściowego! Lokalizacja musi być bezwzględną ścieżką do pliku wideo.");
+    	}
     	
-    	
-    	
+    	String type = movieFile.substring(movieFile.length()-3, movieFile.length());
+    	if(type.toLowerCase().equals("mts"))
+    	{
+    		throw new BadTypeFileException("Typ pliku \"."+type+"\" nie jest obslugiwany!");
+    	}
+
         this.movieFile = movieFile;
         this.picsSaveLocation = picsSaveLocation;
         this.format = format;
@@ -136,9 +148,7 @@ public class VideoThingumebob {
         myReader.addListener(listener);
         while( myReader.readPacket() == null );
         
-        this.videoFps = this.videoFrames/(this.videoDuration/1000000);
-        
-        
+        this.videoFps = this.videoFrames/(this.videoDuration/1000000);  
     }
     
     /**
@@ -208,10 +218,8 @@ public class VideoThingumebob {
     /**
      * Funkcja realizująca główną ideę naszego modełka, czyli wyłapywanie slajdów z pliku 
      * video podanego jako parametr konstruktora.
-     * @param saveImages true = zapis obrazków w osobnych plikach graficznych
-     * @param savePdf true = zapis obrazkow do pliku PDF
      */
-    public void getImagesFromMovie(boolean saveImages, boolean savePdf)
+    public void getImagesFromMovie()
     {
     	System.out.println("Zaczynam przetwarzanie");
         // Tworzę media reader
@@ -220,7 +228,7 @@ public class VideoThingumebob {
         // Konfigurowanie media readera do generowania obrazów w formie BufferImages
         mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
         
-        IMediaTool imageMediaTool = new GetImageFromVideoListener(this, saveImages, savePdf);
+        IMediaTool imageMediaTool = new GetImageFromVideoListener(this);
         mediaReader.addListener(imageMediaTool);
         
         // Przebiegam przez cały plik wideo
@@ -230,8 +238,7 @@ public class VideoThingumebob {
     }
     
     /**
-     * Funkcja odtwarzająca film
-     * @param movieFile ścieżka do pliku 
+     * Funkcja odtwarzająca film w oknie typu JFrame( przestarzale funkcje! )
      */
     public void playMovie()
     {
