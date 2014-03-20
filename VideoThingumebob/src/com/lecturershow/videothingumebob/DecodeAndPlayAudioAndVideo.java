@@ -69,11 +69,8 @@ public class DecodeAndPlayAudioAndVideo
   private static long mFirstVideoTimestampInStream;
   
   /**
-   * Takes a media container (file) as the first argument, opens it,
-   * plays audio as quickly as it can, and opens up a Swing window and displays
-   * video frames with <i>roughly</i> the right timing.
-   *  
-   * @param args Must contain one string which represents a filename
+   * Pobiera kontener z pliku wideo i odtwarza plik w oknie
+   * @param fileName Lokalizacja pliku wideo(ścieżka bezwzględna)
    */
   public static void Play(String fileName)
   {

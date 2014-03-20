@@ -3,7 +3,9 @@
  */
 package com.lecturershow.videothingumebob;
 
+import com.lecturershow.videothingumebob.ExceptionClasses.BadDirectoryLocationException;
 import com.lecturershow.videothingumebob.ExceptionClasses.BadFileLocationException;
+import com.lecturershow.videothingumebob.ExceptionClasses.BadTypeFileException;
 
 /**
  * @author Krzysztof Raciniewski
@@ -14,16 +16,15 @@ public class MainApp {
 
     private static final String saveFilePath = "/home/raciniak/Documents/Example-videos/output/";
     private static final String fileName = "/home/raciniak/Documents/Example-videos/Presentations/slajdy_bez_przejsc.avi";
-	//private static final String fileName = "/home/raciniak/Documents/Example-videos/Presentations/slajdy_z_przejsciami.wmv";
     private static VideoThingumebob thingunebob;
 	
 	/**
-	 * @param args
+	 * @param args Argumenty programu nie są potrzebne
 	 */
 	public static void main(String[] args) {
         try{
         	
-            thingunebob = new VideoThingumebob(fileName, saveFilePath, "png", "images.pdf", 105, 3, 2);
+            thingunebob = new VideoThingumebob(fileName, saveFilePath, "png", "images.pdf", 35, 2, 1);
             thingunebob.showStats();
             
             
@@ -39,13 +40,21 @@ public class MainApp {
             // Zapisywanie screenów
             // parametr1: zapis obrazów w osobnych plikach
             // parametr2: zapis obrazow w formie PDF 
-            //thingunebob.getImagesFromMovie(true,true);
+            thingunebob.getImagesFromMovie();
             
             // Podgląd pliku wideo          
             //thingunebob.playMovie();
-            thingunebob.AddWaterMark("zeZnakiemWodnym.mp4", "/home/raciniak/Pictures/LecturerShow.png", 1.0f);
+            //thingunebob.AddWaterMark("zeZnakiemWodnym.mp4", "/home/raciniak/Pictures/LecturerShow.png", 1.0f);
             
             System.out.println("Program glowny zostal wykonany!");
+        }
+        catch(BadTypeFileException e)
+        {
+        	System.out.println(e.getMessage());
+        }
+        catch(BadDirectoryLocationException e)
+        {
+        	System.out.println(e.getMessage());
         }
         catch(BadFileLocationException e)
         {
