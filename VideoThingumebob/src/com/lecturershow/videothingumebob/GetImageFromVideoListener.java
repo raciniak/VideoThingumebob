@@ -187,6 +187,8 @@ import javax.imageio.ImageIO;
         {
             Color col1;
             Color col2;
+            int count = this.parent.ommitedPixels;
+            
             // Ilość różnic, które można uznać jako zmianę kolorów itp
             for( int i = 0; i < this.parent.videoHeight; i++ )
             {
@@ -206,7 +208,16 @@ import javax.imageio.ImageIO;
                             /*System.out.printf("Piksele [%d][%d] sie nie zgadzaja (%d,%d,%d) - (%d,%d,%d)\n", i, j, 
                                                                     col1.getRed(), col1.getGreen(), col1.getBlue(), 
                                                                     col2.getRed(), col2.getGreen(), col2.getBlue());*/ 
-                            return false;
+                    		System.out.println("Roznica w kolorze czerwonym: " + differenceInRed);
+                    		System.out.println("Roznica w kolorze niebieskim: " + differenceInBlue);
+                    		System.out.println("Roznica w kolorze zielony: " + differenceInGreen);
+                            
+                    		if( count > 0 )
+                    		{
+                    			count--;
+                    		}else{
+                    			return false;
+                    		}
                     }
                 }
             }

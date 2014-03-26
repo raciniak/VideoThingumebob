@@ -36,6 +36,10 @@ public class VideoThingumebob {
     protected String pdfName;
     protected int intervalTime;
     protected int backBufferSize;
+    // Procent pikseli, które będą mogły być pominięte
+    private float ommitedPixelPercent;	
+    // Ilość pikseli, które mogą zostać pominięte, jeżeli nie pasują
+    protected int ommitedPixels;
     
     // Kontener w którym przechowywane bądą strumienie(audio/video) pliku movieFile
     private IContainer container;
@@ -48,6 +52,7 @@ public class VideoThingumebob {
      * @param pdfName nazwa pliku pdf(razem z rozszerzeniem)
      * @param tolleranceOfDifference poziom tolerancji na zmianę koloru (0 - 255)
      * @param intervalTime czas w sekundach z jaką ma odbywać się porównywanie obrazów
+     * @param ommitedPixelPercent Wartość procentowa, która określa ile procent pikseli całego obrazu może zostać pominięta, kiedy nie są identyczne podczas porównywania
      * @param backBufferSize nazwałem to buforem powrotnym, to ilość obrazów, które będą porównywane z aktualnym, w celu wyeliminowania animowanego przejścia między slajdami
      * @throws BadFileLocationException Wyjątek rzucany, kiedy lokalizacja pliku jest niepoprawna
      * @throws BadDirectoryLocationException Wyjątek rzucany, kiedy likalizacja katalogu jest niepoprawna
@@ -55,9 +60,11 @@ public class VideoThingumebob {
      */
     public VideoThingumebob(String movieFile, String picsSaveLocation, 
                             String format, int tolleranceOfDifference, 
-                            int intervalTime, int backBufferSize
+                            int intervalTime, int backBufferSize, float ommitedPixelPercent
                             ) throws BadFileLocationException, BadDirectoryLocationException, BadTypeFileException
     {
+    	this.ommitedPixelPercent = ommitedPixelPercent;
+    	
     	//
     	// Sprawdzam poprawność wprowadzonych parametrów
     	//
@@ -107,6 +114,7 @@ public class VideoThingumebob {
             this.backBufferSize = intervalTime-1;
         
         
+        
         // Ta funkcja pobiera potrzebne informacje o filmie i zapisuje je w polach
         getVideoInfo();
         
@@ -150,17 +158,34 @@ public class VideoThingumebob {
                 {
                     this.videoWidth = coder.getWidth();
                     this.videoHeight = coder.getHeight();
+                    
+                    this.ommitedPixels = (int)((this.videoWidth*this.videoHeight)*this.ommitedPixelPercent);
+                    
+                  System.out.println(this.videoWidth + " x " + this.videoHeight + " x " + this.ommitedPixelPercent + " = " + this.ommitedPixels);
                 }      
             }
             container.close();
         }        
         
+        
         IMediaReader myReader = ToolFactory.makeReader(this.movieFile);
-        FrameCounter listener = new FrameCounter(this);
-        myReader.addListener(listener);
-        while( myReader.readPacket() == null );
+        try
+        {
+	        FrameCounter listener = new FrameCounter(this);
+	        myReader.addListener(listener);
+	        
+	        while( myReader.readPacket() == null )
+	        {
+	        	// ----
+	        }
+        }
+        finally
+        {
+            myReader.close();
+        }
         
         this.videoFps = this.videoFrames/(this.videoDuration/1000000);  
+        
     }
     
     /**

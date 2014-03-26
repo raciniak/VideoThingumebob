@@ -2,11 +2,11 @@
 <classpath>
 	<classpathentry excluding="lectureshow/videothingumebob/App.java|lectureshow/videothingumebob/ConvertAndResizeVideo.java|lectureshow/videothingumebob/ConvertVideoListener.java|lectureshow/videothingumebob/GetImageFromVideoListener.java|lectureshow/videothingumebob/Pdf.java|lectureshow/videothingumebob/Resizer.java|lectureshow/videothingumebob/VideoThingumebob.java" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/logback-classic-1.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/logback-core-1.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-api-1.7.6.jar"/>
-	<classpathentry kind="lib" path="lib/xuggle-utils-1.20.688.jar"/>
-	<classpathentry kind="lib" path="lib/xuggle-xuggler-5.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Krzysztof/git/VideoThingumebob/VideoThingumebob/lib/commons-cli-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Krzysztof/git/VideoThingumebob/VideoThingumebob/lib/logback-classic-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Krzysztof/git/VideoThingumebob/VideoThingumebob/lib/logback-core-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Krzysztof/git/VideoThingumebob/VideoThingumebob/lib/slf4j-api-1.7.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Krzysztof/git/VideoThingumebob/VideoThingumebob/lib/xuggle-utils-1.20.688.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Krzysztof/git/VideoThingumebob/VideoThingumebob/lib/xuggle-xuggler-5.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

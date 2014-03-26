@@ -24,8 +24,8 @@ public class MainApp {
 	public static void main(String[] args) {
         try{
         	
-            thingunebob = new VideoThingumebob(fileName, saveFilePath, "png", 25, 4, 3);
-            thingunebob.showStats();
+            thingunebob = new VideoThingumebob(fileName, saveFilePath, "png", 60, 4, 3, 0.001f);
+            //thingunebob.showStats();
             
             
             // Konwersja pliku wideo na inne formaty
