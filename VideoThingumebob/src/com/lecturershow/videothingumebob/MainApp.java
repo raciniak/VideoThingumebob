@@ -14,8 +14,8 @@ import com.lecturershow.videothingumebob.ExceptionClasses.BadTypeFileException;
  */
 public class MainApp {
 
-    private static final String saveFilePath = "/home/raciniak/Documents/Example-videos/output/";
-    private static final String fileName = "/home/raciniak/Documents/Example-videos/Presentations/slajdy_bez_przejsc.avi";
+    private static final String saveFilePath = "D:\\LecturerShow - nagrania\\gotowe\\output\\";
+    private static final String fileName = "D:\\LecturerShow - nagrania\\gotowe\\Presentations\\slajdy_bez_przejsc.avi";
     private static VideoThingumebob thingunebob;
 	
 	/**
@@ -24,7 +24,7 @@ public class MainApp {
 	public static void main(String[] args) {
         try{
         	
-            thingunebob = new VideoThingumebob(fileName, saveFilePath, "png", "images.pdf", 35, 2, 1);
+            thingunebob = new VideoThingumebob(fileName, saveFilePath, "png", 35, 2, 1);
             thingunebob.showStats();
             
             
