@@ -54,9 +54,8 @@ public class VideoThingumebob {
      * @throws BadTypeFileException Wyjątek rzucany, kiedy rozszerzenie pliku nie jest obsługiwany
      */
     public VideoThingumebob(String movieFile, String picsSaveLocation, 
-                            String format, String pdfName, 
-                            int tolleranceOfDifference, int intervalTime,
-                            int backBufferSize
+                            String format, int tolleranceOfDifference, 
+                            int intervalTime, int backBufferSize
                             ) throws BadFileLocationException, BadDirectoryLocationException, BadTypeFileException
     {
     	//
@@ -69,7 +68,21 @@ public class VideoThingumebob {
     	}
     	
     	f = new File(picsSaveLocation);
-    	if( !f.isDirectory() || !f.exists() )
+    	if( !f.exists() )
+    	{
+    		System.out.println("Katalog wyjściowy nie istnieje, zostanie on utworzony.");
+    		boolean result = f.mkdir();
+    		if(result)
+    		{
+    			System.out.println("Katalog zostal utowzony prawidlowo");
+    		}
+    		else
+    		{
+    			throw new BadDirectoryLocationException("Katalog nie mogl zostac utworzony...");
+    		}
+    	}
+    	
+    	if( !f.isDirectory())
     	{
     		throw new BadDirectoryLocationException("Zła lokalizacja katalogu wyjściowego! Lokalizacja musi być bezwzględną ścieżką do pliku wideo.");
     	}
@@ -84,7 +97,6 @@ public class VideoThingumebob {
         this.picsSaveLocation = picsSaveLocation;
         this.format = format;
         this.tolleranceOfDifference = tolleranceOfDifference;
-        this.pdfName = pdfName;
         this.intervalTime = intervalTime;
         this.videoFrames = 0;
         // W backBuffer będzie można przechowywać obrazki pomiędzy interwałem czasowym
