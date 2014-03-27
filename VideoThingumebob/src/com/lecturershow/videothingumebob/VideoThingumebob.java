@@ -40,7 +40,6 @@ public class VideoThingumebob {
     private float ommitedPixelPercent;	
     // Ilość pikseli, które mogą zostać pominięte, jeżeli nie pasują
     protected int ommitedPixels;
-    
     // Kontener w którym przechowywane bądą strumienie(audio/video) pliku movieFile
     private IContainer container;
     
@@ -89,6 +88,21 @@ public class VideoThingumebob {
     		}
     	}
     	
+    	f = new File(picsSaveLocation+"snapshots");
+    	if( !f.exists() )
+    	{
+    		System.out.println("Katalog wyjściowy dla snapshot-ow nie istnieje, zostanie on utworzony.");
+    		boolean result = f.mkdir();
+    		if(result)
+    		{
+    			System.out.println("Katalog zostal utowzony prawidlowo");
+    		}
+    		else
+    		{
+    			throw new BadDirectoryLocationException("Katalog nie mogl zostac utworzony...");
+    		}
+    	}
+    	
     	if( !f.isDirectory())
     	{
     		throw new BadDirectoryLocationException("Zła lokalizacja katalogu wyjściowego! Lokalizacja musi być bezwzględną ścieżką do pliku wideo.");
@@ -117,9 +131,6 @@ public class VideoThingumebob {
         
         // Ta funkcja pobiera potrzebne informacje o filmie i zapisuje je w polach
         getVideoInfo();
-        
-        System.out.printf("===========================> ILOSC FPS: %d \n\n", this.videoFps);
-        System.out.printf("===========================> ILOSC RAMEK: %d \n\n", this.videoFrames);
     }
     
     /**
@@ -266,6 +277,28 @@ public class VideoThingumebob {
         mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
         
         IMediaTool imageMediaTool = new GetImageFromVideoListener(this);
+        mediaReader.addListener(imageMediaTool);
+        
+        // Przebiegam przez cały plik wideo
+        while( mediaReader.readPacket() == null );
+        
+        mediaReader.close();
+    }
+    
+    /**
+     * Funkcja wyciąga z pliku wideo miniaturki metodą losową i zapisuje je w katalogu output/snapshots/
+     * video podanego jako parametr konstruktora.
+     */
+    public void getImagesFromMovie(String movieFile, int n)
+    {
+    	System.out.println("Zaczynam przetwarzanie");
+        // Tworzę media reader
+        IMediaReader mediaReader = ToolFactory.makeReader(movieFile);
+        
+        // Konfigurowanie media readera do generowania obrazów w formie BufferImages
+        mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
+        
+        IMediaTool imageMediaTool = new GetSnapshotsFromVideoListener(n,this);
         mediaReader.addListener(imageMediaTool);
         
         // Przebiegam przez cały plik wideo

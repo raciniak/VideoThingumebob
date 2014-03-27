@@ -25,7 +25,7 @@ public class MainApp {
         try{
         	
             thingunebob = new VideoThingumebob(fileName, saveFilePath, "png", 60, 4, 3, 0.001f);
-            //thingunebob.showStats();
+            thingunebob.showStats();
             
             
             // Konwersja pliku wideo na inne formaty
@@ -45,6 +45,8 @@ public class MainApp {
             // Podgląd pliku wideo          
             //thingunebob.playMovie();
             //thingunebob.AddWaterMark("zeZnakiemWodnym.mp4", "/home/raciniak/Pictures/LecturerShow.png", 1.0f);
+            
+            thingunebob.getImagesFromMovie(fileName, 5);
             
             System.out.println("Program glowny zostal wykonany!");
         }

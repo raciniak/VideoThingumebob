@@ -35,6 +35,8 @@ import javax.imageio.ImageIO;
         private int imageToSave;
         // Czasy pojawienia się slajdów
         private ArrayList<String> times;
+        // Nazwa pliku
+        private int fileName;
         
         
         /**
@@ -48,6 +50,7 @@ import javax.imageio.ImageIO;
             this.backBuffer = new ArrayList<BufferedImage>();
             this.times = new ArrayList<String>();
             this.lastImageNumber = 1;
+            this.fileName = 1;
         }
 
         @Override
@@ -62,7 +65,7 @@ import javax.imageio.ImageIO;
                 // Pobieramy obraz, który będziemy analizować
                 BufferedImage image = event.getImage();
 
-                String fileName = Integer.toString((int)Math.floor(this.lastImageNumber/this.parent.videoFps));
+                String fileTimeIn = Integer.toString((int)Math.floor(this.lastImageNumber/this.parent.videoFps));
                 // Jeżeli dopiero zaczynam analizę tablica "pixel" jest pusta
                 // zapełniam ją i zapisuje obraz w sekundzie interwału czasowego
                 // jeżeli interwał będzie ustawiony na 3-5s ominiemy animację wstępną
@@ -72,27 +75,28 @@ import javax.imageio.ImageIO;
                     this.prevPicture = getPixels(image);
                     // Jeżeli nie mamy animowanego przejścia, to jakiś obraz z bufora 
                     // pasował do aktualnego, dlatego właśnie go zapisuję do pliku i pdf-a
-                    fileName = Integer.toString( Integer.parseInt(fileName) - (this.imageToSave+1) );
+                    fileTimeIn = Integer.toString( Integer.parseInt(fileTimeIn) - (this.imageToSave+1) );
                     // Jeżeli animacja występuje od samego początku filmu, a interwał jest mały
                     // to dzięki temu pominiemy zapis obrazu w trakcie animacji
                     if( !isAnimatedTransition(getPixels(image)) )
                     {
                         // Jeżeli nie mamy animowanego przejścia, to jakiś obraz z bufora 
                         // pasował do aktualnego, dlatego właśnie go zapisuję do pliku i pdf-a
-                        fileName = Integer.toString( Integer.parseInt(fileName) - (this.imageToSave+1) );
+                        fileTimeIn = Integer.toString( Integer.parseInt(fileTimeIn) - (this.imageToSave+1) );
                         
                         // Zapisuję czas pojawienia się slajdu
-                        this.times.add(fileName);
+                        this.times.add(fileTimeIn);
                               
                         // Zapisuję obraz w formie pliku graficznego
                         // Nazwa pliku to sekunda z filmu, którą zapisuję
                         try {
-                            ImageIO.write(this.backBuffer.get(imageToSave), this.parent.format, new File(this.parent.picsSaveLocation+fileName+"."+parent.format));
+                            ImageIO.write(this.backBuffer.get(imageToSave), this.parent.format, new File(this.parent.picsSaveLocation+this.fileName+"."+parent.format));
+                            this.fileName++;
                         } catch (IOException ex) {
                             System.out.println(ex.getMessage());
                         }
                     }               
-                        System.out.printf("Zapisałem obraz nr.%s \n", fileName);
+                        
                 }else{ 
                     // Jeżeli jest to kolejny obraz
                     // Porównuję tablicę pikseli zapisanych wcześniej
@@ -100,14 +104,15 @@ import javax.imageio.ImageIO;
                     {
                         // Jeżeli nie mamy animowanego przejścia, to jakiś obraz z bufora 
                         // pasował do aktualnego, dlatego właśnie go zapisuję do pliku i pdf-a
-                        fileName = Integer.toString( Integer.parseInt(fileName) - (this.imageToSave+1) );
+                        fileTimeIn = Integer.toString( Integer.parseInt(fileTimeIn) - (this.imageToSave+1) );
                         
                         // Zapisuję czas pojawienia się slajdu
-                        this.times.add(fileName);
+                        this.times.add(fileTimeIn);
 
                         try {
-                            System.out.printf("Zapisuje obraz nr.%s\n", fileName);
-                            ImageIO.write(this.backBuffer.get(imageToSave), this.parent.format, new File(this.parent.picsSaveLocation+fileName+"."+parent.format));
+                            System.out.printf("Zapisuje obraz nr.%s\n", fileTimeIn);
+                            ImageIO.write(this.backBuffer.get(imageToSave), this.parent.format, new File(this.parent.picsSaveLocation+this.fileName+"."+parent.format));
+                            this.fileName++;
                         } catch (IOException ex) {
                             Logger.getLogger(VideoThingumebob.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -139,12 +144,8 @@ import javax.imageio.ImageIO;
                     if( this.backBuffer.size() == this.parent.backBufferSize )
                     {
                         this.backBuffer.clear();
-                        System.out.println("Czyszcze backBuffer");
                     }
             
-                   
-                   //System.out.printf("Reszta: %f - Numer obrazu: %d\n",rest, lastImageNumber/this.parent.videoFps);
-                   System.out.printf("Zapisuje w backBuff[%d] sekundę %f \n", (int)(this.parent.backBufferSize-rest), (double)lastImageNumber/this.parent.videoFps);
                    try
                    {
                        this.backBuffer.add(image);
@@ -205,12 +206,6 @@ import javax.imageio.ImageIO;
                         differenceInGreen > this.parent.tolleranceOfDifference || 
                         differenceInBlue > this.parent.tolleranceOfDifference )
                     {
-                            /*System.out.printf("Piksele [%d][%d] sie nie zgadzaja (%d,%d,%d) - (%d,%d,%d)\n", i, j, 
-                                                                    col1.getRed(), col1.getGreen(), col1.getBlue(), 
-                                                                    col2.getRed(), col2.getGreen(), col2.getBlue());*/ 
-                    		System.out.println("Roznica w kolorze czerwonym: " + differenceInRed);
-                    		System.out.println("Roznica w kolorze niebieskim: " + differenceInBlue);
-                    		System.out.println("Roznica w kolorze zielony: " + differenceInGreen);
                             
                     		if( count > 0 )
                     		{
@@ -241,10 +236,8 @@ import javax.imageio.ImageIO;
             {
                 if( !SimplePixelsEquals(getPixels(this.backBuffer.get(i)), pixels) )
                 {
-                    System.out.println("Roznia sie!");
                     count++;
                 }else{
-                    System.out.println("Nie roznia sie!");
                     this.imageToSave = i;
                 }
             }
