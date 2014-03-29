@@ -40,13 +40,13 @@ public class MainApp {
             // Zapisywanie screenów
             // parametr1: zapis obrazów w osobnych plikach
             // parametr2: zapis obrazow w formie PDF 
-            thingunebob.getImagesFromMovie();
+            // thingunebob.getImagesFromMovie();
             
             // Podgląd pliku wideo          
             //thingunebob.playMovie();
             //thingunebob.AddWaterMark("zeZnakiemWodnym.mp4", "/home/raciniak/Pictures/LecturerShow.png", 1.0f);
             
-            thingunebob.getImagesFromMovie(fileName, 5);
+            thingunebob.getImagesFromMovie(fileName, 10);
             
             System.out.println("Program glowny zostal wykonany!");
         }

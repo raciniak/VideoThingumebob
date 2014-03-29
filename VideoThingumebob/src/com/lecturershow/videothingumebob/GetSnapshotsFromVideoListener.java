@@ -38,8 +38,8 @@ import javax.imageio.ImageIO;
             this.lastImageNumber = 1;
             this.fileName = 1;
             this.times = new int[n];
-            this.min = Integer.MIN_VALUE;
-            this.max = Integer.MAX_VALUE;
+            this.min = Integer.MAX_VALUE;
+            this.max = Integer.MIN_VALUE;
             
             Random random = new Random();
             // Zapelniam tablice
@@ -47,7 +47,7 @@ import javax.imageio.ImageIO;
             {
             	this.times[i] = random.nextInt( this.parent.videoFrames / this.parent.videoFps );
             }
-            
+                        
             for( int i=0; i < n; i++ )
             {
             	if( this.times[i] < this.min )
@@ -55,35 +55,32 @@ import javax.imageio.ImageIO;
             	if( this.times[i] > this.max )
             		this.max = this.times[i];
             }
-            
+                 
         }
 
         @Override
         public void onVideoPicture(IVideoPictureEvent event)
         {
-            
-                // Pobieramy obraz, który będziemy analizować
-                BufferedImage image = event.getImage();
-                if( this.min < (float)this.lastImageNumber/this.parent.videoFps && this.max > (float)this.lastImageNumber/this.parent.videoFps )
-                {
-	                for( int i=0; i < this.times.length; i++ )
-	                {
-		                if( (float)this.lastImageNumber/this.parent.videoFps == this.times[i] )
-		                {
-		                    
-		                            try {
-										ImageIO.write(image, this.parent.format, new File(this.parent.picsSaveLocation+"snapshots/"+this.fileName+"."+parent.format));
-									} catch (IOException e) {
-										e.printStackTrace();
-									}
-		                            this.fileName++;
-		
-		                }      
-	                }
-                }
- 
-            
-            
+        	float imageNumber = (float)this.lastImageNumber/this.parent.videoFps;
+            	
+        	BufferedImage image = event.getImage();
+        	
+        	if( this.min <= imageNumber && this.max >= imageNumber )
+            {
+	        	for( int i=0; i < this.times.length; i++ )
+	        	{
+	        		if( (float)this.lastImageNumber/this.parent.videoFps == this.times[i] )
+	        		{
+	        			try {
+	        				ImageIO.write(image, this.parent.format, new File(this.parent.picsSaveLocation+"snapshots/"+this.fileName+"."+parent.format));
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+		        	this.fileName++;
+		            }      
+	            }
+            }
+
             this.lastImageNumber++;
             super.onVideoPicture(event);
         }
