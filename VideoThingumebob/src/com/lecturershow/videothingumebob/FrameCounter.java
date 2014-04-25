@@ -1,4 +1,4 @@
-package com.lecturershow.videothingumebob;
+package com.lectureshow.videothingumebob;
 
 import com.xuggle.mediatool.MediaToolAdapter;
 import com.xuggle.mediatool.event.IVideoPictureEvent;

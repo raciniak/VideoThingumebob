@@ -1,4 +1,4 @@
-package com.lecturershow.videothingumebob;
+package com.lectureshow.videothingumebob;
 
 import java.awt.Dimension;
 import java.awt.Graphics;

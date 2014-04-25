@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.lecturershow.videothingumebob;
+package com.lectureshow.videothingumebob;
 
 import com.xuggle.mediatool.MediaToolAdapter;
 import com.xuggle.mediatool.event.IAddStreamEvent;
